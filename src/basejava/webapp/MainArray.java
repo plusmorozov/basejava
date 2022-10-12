@@ -38,12 +38,8 @@ public class MainArray {
                 case "save":
                     r = new Resume();
                     r.setUuid(uuid);
-                    if (ARRAY_STORAGE.get(uuid) != null) {
-                        System.out.println("Резюме с id " + uuid + " уже существует");
-                    } else {
-                        ARRAY_STORAGE.save(r);
-                        printAll();
-                    }
+                    ARRAY_STORAGE.save(r);
+                    printAll();
                     break;
                 case "delete":
                     if (ARRAY_STORAGE.get(uuid) == null) {
