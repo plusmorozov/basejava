@@ -8,56 +8,11 @@ import java.util.Arrays;
  * Array based storage for Resumes
  */
 
-public class ArrayStorage {
-    private final int STORAGE_LIMIT = 10000;
-    private final Resume[] storage = new Resume[STORAGE_LIMIT];
-    private int countResume;
+public class ArrayStorage extends AbstractArrayStorage {
 
     public void clear() {
-        Arrays.fill(storage, 0, countResume, null);
-        countResume = 0;
-    }
-
-    public void save(Resume r) {
-        if (getIndex(r.getUuid()) != -1) {
-            System.out.println("Резюме с id = " + r.getUuid() + " уже существует");
-        } else if (countResume == storage.length) {
-            System.out.println("Сохранить резюме невозможно. Нет места");
-        } else {
-            storage[countResume] = r;
-            countResume++;
-        }
-    }
-
-    public Resume get(String uuid) {
-        int index = getIndex(uuid);
-        if (index == -1) {
-            System.out.println("Резюме с id = " + uuid + " не существует");
-            return null;
-        }
-        return storage[index];
-    }
-
-    public void delete(String uuid) {
-        int index = getIndex(uuid);
-        if (index >= 0) {
-            storage[getIndex(uuid)] = storage[countResume - 1];
-            storage[countResume - 1] = null;
-            countResume--;
-        } else {
-            System.out.println("Резюме с id = " + uuid + " не существует");
-        }
-    }
-
-    /**
-     * @return array, contains only Resumes in storage (without null)
-     */
-    public Resume[] getAll() {
-        return Arrays.copyOf(storage, countResume);
-    }
-
-    public int size() {
-        return countResume;
+        Arrays.fill(storage, 0, size, null);
+        size = 0;
     }
 
     public void update(Resume r) {
@@ -70,9 +25,35 @@ public class ArrayStorage {
         }
     }
 
-    private int getIndex(String uuid) {
-        for (int i = 0; i < countResume; i++) {
-            if (storage[i].getUuid().equals(uuid)) {
+    public void save(Resume r) {
+        if (getIndex(r.getUuid()) != -1) {
+            System.out.println("Резюме с id = " + r.getUuid() + " уже существует");
+        } else if (size >= storage.length) {
+            System.out.println("Сохранить резюме невозможно. Нет места");
+        } else {
+            storage[size] = r;
+            size++;
+        }
+    }
+
+    public void delete(String uuid) {
+        int index = getIndex(uuid);
+        if (index >= 0) {
+            storage[getIndex(uuid)] = storage[size - 1];
+            storage[size - 1] = null;
+            size--;
+        } else {
+            System.out.println("Резюме с id = " + uuid + " не существует");
+        }
+    }
+
+    public Resume[] getAll() {
+        return Arrays.copyOfRange(storage, 0, size);
+    }
+
+    protected int getIndex(String uuid) {
+        for (int i = 0; i < size; i++) {
+            if (uuid.equals(storage[i].getUuid())) {
                 return i;
             }
         }
