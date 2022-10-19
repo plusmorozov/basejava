@@ -2,13 +2,14 @@ package basejava.webapp;
 
 import basejava.webapp.model.Resume;
 import basejava.webapp.storage.ArrayStorage;
+import basejava.webapp.storage.Storage;
 
 /**
  * Test for your basejava.webapp.storage.ArrayStorage implementation
  add branch HW3
  */
 public class MainTestArrayStorage {
-    static final ArrayStorage ARRAY_STORAGE = new ArrayStorage();
+    private static final Storage ARRAY_STORAGE = new ArrayStorage();
 
     public static void main(String[] args) {
         final Resume r1 = new Resume();
