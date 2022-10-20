@@ -1,5 +1,8 @@
 package basejava.webapp.storage;
 
+import basejava.webapp.exception.ExistStorageException;
+import basejava.webapp.exception.NotExistStorageException;
+import basejava.webapp.exception.StorageException;
 import basejava.webapp.model.Resume;
 
 import java.util.Arrays;
@@ -23,9 +26,8 @@ public abstract class AbstractArrayStorage implements Storage {
         int index = getIndex(r.getUuid());
         if (index >= 0) {
             storage[index] = r;
-            System.out.println("Резюме с id = " + r.getUuid() + " обновлено");
         } else {
-            System.out.println("Резюме с id = " + r.getUuid() + " не существует");
+            throw new NotExistStorageException(r.getUuid());
         }
     }
 
@@ -36,9 +38,9 @@ public abstract class AbstractArrayStorage implements Storage {
     public void save(Resume r) {
         int index = getIndex(r.getUuid());
         if (index >= 0) {
-            System.out.println("Резюме с id = " + r.getUuid() + " уже существует");
-        } else if (size >= STORAGE_LIMIT) {
-            System.out.println("Сохранить резюме невозможно. Нет места");
+            throw new ExistStorageException(r.getUuid());
+        } else if (size == STORAGE_LIMIT) {
+            throw new StorageException("Storage overflow", r.getUuid());
         } else {
             insertElement(r, index);
             size++;
@@ -52,15 +54,14 @@ public abstract class AbstractArrayStorage implements Storage {
             storage[size - 1] = null;
             size--;
         } else {
-            System.out.println("Резюме с id = " + uuid + " не существует");
+            throw new NotExistStorageException(uuid);
         }
     }
 
     public Resume get(String uuid) {
         int index = getIndex(uuid);
         if (index < 0) {
-            System.out.println("Резюме с id = " + uuid + " не существует");
-            return null;
+            throw new NotExistStorageException(uuid);
         }
         return storage[index];
     }
@@ -70,6 +71,4 @@ public abstract class AbstractArrayStorage implements Storage {
     protected abstract void insertElement(Resume r, int index);
 
     protected abstract void fillDeletedElement(int index);
-
-
 }
