@@ -12,7 +12,7 @@ public class MainReflection {
         Field field = r.getClass().getDeclaredFields()[0];
         field.setAccessible(true);
         System.out.println("Field name: " + field.getName());
-        System.out.println("Field value:" + field.get(r));
+        System.out.println("Field value: " + field.get(r));
         field.set(r, "new_uuid");
         System.out.println(r);
         // вызвать toString резюме через reflection
