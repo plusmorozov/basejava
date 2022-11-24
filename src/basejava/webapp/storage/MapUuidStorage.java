@@ -2,8 +2,7 @@ package basejava.webapp.storage;
 
 import basejava.webapp.model.Resume;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class MapUuidStorage extends AbstractStorage {
     private final Map<String, Resume> map = new HashMap<>();
@@ -14,28 +13,28 @@ public class MapUuidStorage extends AbstractStorage {
     }
 
     @Override
-    protected void doUpdate(Resume r, Object searchKey) {
-        map.put((String) searchKey, r);
+    protected void doUpdate(Resume r, Object uuid) {
+        map.put((String) uuid, r);
     }
 
     @Override
-    protected boolean isExist(Object searchKey) {
-        return map.containsKey((String) searchKey);
+    protected boolean isExist(Object uuid) {
+        return map.containsKey((String) uuid);
     }
 
     @Override
-    protected void doSave(Resume r, Object searchKey) {
-        map.put((String) searchKey, r);
+    protected void doSave(Resume r, Object uuid) {
+        map.put((String) uuid, r);
     }
 
     @Override
-    protected Resume doGet(Object searchKey) {
-        return map.get((String) searchKey);
+    protected Resume doGet(Object uuid) {
+        return map.get((String) uuid);
     }
 
     @Override
-    protected void doDelete(Object searchKey) {
-        map.remove((String) searchKey);
+    protected void doDelete(Object uuid) {
+        map.remove((String) uuid);
     }
 
     @Override
@@ -44,10 +43,8 @@ public class MapUuidStorage extends AbstractStorage {
     }
 
     @Override
-    public Resume[] getAll() {
-//        return map.values().toArray(new Resume[0]);
-        //return new Resume[0];
-        return map.values().toArray(new Resume[0]);
+    public List<Resume> doCopyAll() {
+        return new ArrayList<>(map.values());
     }
 
     @Override
