@@ -7,7 +7,10 @@ import java.util.Arrays;
 
 public class ResumeTestData {
     public static void main(String args[]) {
-        Resume R = new Resume("uuid", "Морозов Максим Владимирович");
+//        createResume("uuid", "Морозов Максим Владимирович");
+    }
+    public static Resume createResume (String uuid, String fullName) {
+        Resume R = new Resume(uuid, fullName);
         R.addContact(ContactType.PHONE, "+79229229292");
         R.addContact(ContactType.EMAIL, "plusmorozov@yandex.ru");
         R.addContact(ContactType.GITHUB, "https://github.com/plusmorozov");
@@ -26,15 +29,6 @@ public class ResumeTestData {
                         new Organization("Organization one", "http://organizationone.ru",
                                 Arrays.asList(
                                         new Period(2016, Month.JANUARY, 12, 2015, Month.JULY, 15, "Name of the first position", "Description of the first position"))))));
-
-        System.out.println(R.getContact(ContactType.PHONE));
-        System.out.println(R.getContact(ContactType.EMAIL));
-        System.out.println(R.getContact(ContactType.GITHUB));
-        System.out.println(R.getSection(SectionType.PERSONAL));
-        System.out.println(R.getSection(SectionType.OBJECTIVE));
-        System.out.println(R.getSection(SectionType.ACHIEVEMENT));
-        System.out.println(R.getSection(SectionType.QUALIFICATIONS));
-        System.out.println(R.getSection(SectionType.EDUCATION).toString());
-        System.out.println(R.getSection(SectionType.EXPERIENCE));
+        return R;
     }
 }
