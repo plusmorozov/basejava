@@ -26,18 +26,19 @@ public class MainFile {
             throw new RuntimeException(e);
         }
         System.out.println();
-        printDirectory(new File("C:\\Java\\basejava\\src\\basejava"));
-     }
+        printDirectory(dir);
+    }
 
     public static void printDirectory(File dir) {
         File[] list = dir.listFiles();
-        if (list == null) return;
-        for (File file : list) {
-            if (file.isDirectory()) {
-                System.out.println("Dir: " + file.getName());
-                printDirectory(file);
-            } else {
-                System.out.println("File: " + file.getName());
+        if (list != null) {
+            for (File file : list) {
+                if (file.isDirectory()) {
+                    System.out.println("Dir: " + file.getName());
+                    printDirectory(file);
+                } else {
+                    System.out.println("File: " + file.getName());
+                }
             }
         }
     }
