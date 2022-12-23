@@ -1,7 +1,8 @@
-package basejava.webapp.storage;
+package basejava.webapp.storage.serializer;
 
 import basejava.webapp.exception.StorageException;
 import basejava.webapp.model.Resume;
+import basejava.webapp.storage.serializer.StrategySerialize;
 
 import java.io.*;
 
