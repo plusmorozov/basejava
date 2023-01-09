@@ -48,6 +48,10 @@ public class Resume extends AbstractSection implements Comparable<Resume>, Seria
         return contacts;
     }
 
+    public Map<SectionType, AbstractSection> getSections() {
+        return sections;
+    }
+
     public String getContact(ContactType type) {
         return contacts.get(type);
     }
