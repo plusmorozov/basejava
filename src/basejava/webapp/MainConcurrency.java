@@ -1,15 +1,29 @@
 package basejava.webapp;
 
-import basejava.webapp.util.LazySingleton;
-
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 public class MainConcurrency {
     public static final int THREAD_NUMBERS = 10000;
     private static int counter;
+    private final AtomicInteger atomicCounter = new AtomicInteger();
     private static final Object LOCK1 = new Object();
     private static final Object LOCK2 = new Object();
+    private static final Lock lock = new ReentrantLock();
+    private static final ThreadLocal<SimpleDateFormat> threadLocal = new ThreadLocal<SimpleDateFormat>() {
+        @Override
+        protected SimpleDateFormat initialValue() {
+            return new SimpleDateFormat();
+        }
+    };
 
     public static void main(String[] args) throws InterruptedException {
         System.out.println(Thread.currentThread().getName());
@@ -27,32 +41,43 @@ public class MainConcurrency {
         System.out.println(thread0.getState());
 
         final MainConcurrency mainConcurrency = new MainConcurrency();
-        List<Thread> threads = new ArrayList<>(THREAD_NUMBERS);
+        CountDownLatch latch = new CountDownLatch(THREAD_NUMBERS);
+        ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         for (int i = 0; i < THREAD_NUMBERS; i++) {
-            Thread thread = new Thread(() -> {
+            Future<Integer> future = executorService.submit(() ->
+            {
                 for (int j = 0; j < 100; j++) {
                     mainConcurrency.inc();
                 }
+                latch.countDown();
+                return 5;
             });
-            thread.start();
-            threads.add(thread);
         }
-        threads.forEach(t -> {
-            try {
-                t.join();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        });
-        System.out.println(counter);
-        LazySingleton.getInstance();
 
-        System.out.println("--- Deadlock ---");
-        deadLock (LOCK1, LOCK2);
-        deadLock (LOCK2, LOCK1);
+        latch.await(10, TimeUnit.SECONDS);
+        executorService.shutdown();
+        System.out.println(mainConcurrency.atomicCounter.get());
+
+//        System.out.println("--- Deadlock ---");
+//        deadLock (LOCK1, LOCK2);
+//        deadLock (LOCK2, LOCK1);
+        System.out.println(minValue(new int[]{9, 4, 3, 2, 1, 3}));
+
+        List<Integer> list = new ArrayList<>(Arrays.asList(1,2,3,4,5,6,7,8,9,1));
+        System.out.println(oddOrEven(list));
     }
 
-    private static void deadLock (Object object1, Object object2) {
+    private static int minValue(int[] values) {
+        return Arrays.stream(values).distinct().sorted().reduce((s1, s2) -> s1 * 10 + s2).getAsInt();
+    }
+
+    private static List<Integer> oddOrEven(List<Integer> integers) {
+        final Map<Boolean, List<Integer>> oddsAndEvens = integers.stream()
+                .collect(Collectors.partitioningBy(i -> i % 2 == 0));
+        return oddsAndEvens.get(oddsAndEvens.get(false).size() % 2 != 0);
+    }
+
+    private static void deadLock(Object object1, Object object2) {
         Thread thread = new Thread() {
             @Override
             public void run() {
@@ -70,10 +95,9 @@ public class MainConcurrency {
             }
         };
         thread.start();
-
     }
 
-    private synchronized void inc() {
-        counter++;
+    private void inc() {
+        atomicCounter.incrementAndGet();
     }
 }
